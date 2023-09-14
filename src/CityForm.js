@@ -27,10 +27,10 @@ function CityForm() {
 
         if (place) {
             try {
-                const proxyurl = "https://cors-anywhere.herokuapp.com/";
+              //  const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
                 const response = await fetch(
-                    `${proxyurl}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${config.googleApiKey}`
+                    `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${config.googleApiKey}`
                 );
 
                 if (response.ok) {
@@ -51,11 +51,11 @@ function CityForm() {
         const place = event.target.place.value;
 
         if (place) {
-            const proxyurl = "https://cors-anywhere.herokuapp.com/";
+          //  const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
             try {
                 const response = await fetch(
-                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=${config.googleApiKey}`
+                    `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=${config.googleApiKey}`
                 );
 
                 if (response.ok) {
@@ -104,9 +104,9 @@ function CityForm() {
 
     const fetchWeatherData = async (cityName) => {
         try {
-            const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            // const proxyurl = "https://cors-anywhere.herokuapp.com/";
             const response = await fetch(
-                `${proxyurl}https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${config.openWeatherApiKey}&units=metric`
+                `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${config.openWeatherApiKey}&units=metric`
             );
 
             if (response.ok) {
@@ -174,18 +174,18 @@ function CityForm() {
     const fetchPlacesData = async (cityName) => {
         try {
             const apiKey = `${config.googleApiKey}`;
-            const proxyurl = "https://cors-anywhere.herokuapp.com/";
+          //  const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
             const restaurantsResponse = await fetch(
-                `${proxyurl}https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${cityName}&key=${apiKey}`
+                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${cityName}&key=${apiKey}`
             );
 
             const historicalSitesResponse = await fetch(
-                `${proxyurl}https://maps.googleapis.com/maps/api/place/textsearch/json?query=historical+sites+in+${cityName}&key=${apiKey}`
+                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=historical+sites+in+${cityName}&key=${apiKey}`
             );
 
             const placesOfInterestResponse = await fetch(
-                `${proxyurl}https://maps.googleapis.com/maps/api/place/textsearch/json?query=places+of+interest+in+${cityName}&key=${apiKey}`
+                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=places+of+interest+in+${cityName}&key=${apiKey}`
             );
 
             const restaurantsData = await restaurantsResponse.json();
