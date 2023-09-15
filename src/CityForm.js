@@ -15,12 +15,35 @@ function CityForm() {
         placesOfInterest: []
     });
 
+    const inputRef = useRef(null);
+
     useEffect(() => {
-        initAutocomplete();
-        // eslint-disable-next-line
+        loadGoogleMapsScript(() => {
+            initAutocomplete();
+        });
     }, []);
 
-    const inputRef = useRef(null);
+    const loadGoogleMapsScript = (callback) => {
+        const existingScript = document.getElementById('googleMaps');
+
+        if (existingScript) {
+            // If the script is already loaded, just execute the callback
+            if (callback && (!existingScript.onload || existingScript.readyState === 'loaded' || existingScript.readyState === 'complete')) {
+                callback();
+            }
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleApiKey}&libraries=places`;
+        script.id = 'googleMaps';
+        document.body.appendChild(script);
+
+        script.onload = () => {
+            if (callback) callback();
+        };
+    };
+
 
     const onPlaceInputChange = async () => {
         const place = inputRef.current.value;
@@ -55,7 +78,7 @@ function CityForm() {
 
             try {
                 const response = await fetch(
-                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=${config.googleApiKey}`
+                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=AIzaSyAy2_thrv8sXvVOpLFKDNr7fFVawlIpeFs`
                 );
 
                 if (response.ok) {
@@ -95,12 +118,19 @@ function CityForm() {
     };
 
     const initAutocomplete = () => {
+        // Ensure Google Maps JavaScript API has loaded
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+            console.error("Google Maps JavaScript API not available");
+            return;
+        }
+
         const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
             types: ['(cities)'],
         });
 
         autocomplete.addListener('place_changed', onPlaceInputChange);
     };
+
 
     const fetchWeatherData = async (cityName) => {
         try {
@@ -210,7 +240,6 @@ function CityForm() {
     return (
         <div className="container-fluid" style={{ background: "url('http://i.hizliresim.com/v4Qykv.png') no-repeat center center fixed", WebkitBackgroundSize: 'cover', MozBackgroundSize: 'cover', OBackgroundSize: 'cover', backgroundSize: 'cover', fontFamily: "'Roboto', Tahoma, Arial, sans-serif", lineHeight: 1.5, fontSize: 13 }}>
             <h1 className="text-center">City Finder</h1>
-
             <form onSubmit={handlePlaceSubmit}>
                 <input
                     type="text"
@@ -220,7 +249,9 @@ function CityForm() {
                     ref={inputRef}
                     onChange={onPlaceInputChange}
                 />
-                <button type="submit" className="button" title="Search"><FontAwesomeIcon icon={faSearch} /></button>
+                <button type="submit" className="button" title="Search">
+                    <FontAwesomeIcon icon={faSearch} />
+                </button>
             </form>
 
             <div className="row">
