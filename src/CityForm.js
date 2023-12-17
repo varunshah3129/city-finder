@@ -79,7 +79,7 @@ function CityForm() {
 
             try {
                 const response = await fetch(
-                    `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=AIzaSyAy2_thrv8sXvVOpLFKDNr7fFVawlIpeFs`
+                    `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=${config.googlePlaceApikey}`
                 );
 
                 if (response.ok) {
