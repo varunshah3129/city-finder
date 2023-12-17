@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './CityForm.css';
 import config from './config';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faLocationPin } from '@fortawesome/free-solid-svg-icons';
+
 
 function CityForm() {
     const [cityData, setCityData] = useState(null);
@@ -23,14 +24,13 @@ function CityForm() {
     }, []);
 
     const loadGoogleMapsScript = (callback) => {
-        if (window.google && window.google.maps && window.google.maps.places) {
-            if (callback) callback();
-            return;
-        }
-
         const existingScript = document.getElementById('googleMaps');
+
         if (existingScript) {
-            existingScript.addEventListener('load', callback);
+            // If the script is already loaded, just execute the callback
+            if (callback && (!existingScript.onload || existingScript.readyState === 'loaded' || existingScript.readyState === 'complete')) {
+                callback();
+            }
             return;
         }
 
@@ -44,29 +44,21 @@ function CityForm() {
         };
     };
 
-    const initAutocomplete = () => {
-        if (!window.google || !window.google.maps || !window.google.maps.places) {
-            console.error("Google Maps JavaScript API not available");
-            return;
-        }
-
-        const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
-            types: ['(cities)'],
-        });
-
-        autocomplete.addListener('place_changed', onPlaceInputChange);
-    };
 
     const onPlaceInputChange = async () => {
         const place = inputRef.current.value;
+
         if (place) {
             try {
+                const proxyurl = "https://cors-anywhere.herokuapp.com/";
+
                 const response = await fetch(
-                    `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${config.googleApiKey}`
+                    `${proxyurl}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${config.googleApiKey}`
                 );
 
                 if (response.ok) {
                     const data = await response.json();
+                    // You can perform any actions with the fetched data here
                     console.log('Autocomplete data:', data);
                 } else {
                     console.error('Error fetching autocomplete suggestions');
@@ -86,7 +78,7 @@ function CityForm() {
 
             try {
                 const response = await fetch(
-                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=${config.googleApiKey}`
+                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=AIzaSyAy2_thrv8sXvVOpLFKDNr7fFVawlIpeFs`
                 );
 
                 if (response.ok) {
@@ -125,6 +117,21 @@ function CityForm() {
         }
     };
 
+    const initAutocomplete = () => {
+        // Ensure Google Maps JavaScript API has loaded
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+            console.error("Google Maps JavaScript API not available");
+            return;
+        }
+
+        const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
+            types: ['(cities)'],
+        });
+
+        autocomplete.addListener('place_changed', onPlaceInputChange);
+    };
+
+
     const fetchWeatherData = async (cityName) => {
         try {
             const proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -134,6 +141,7 @@ function CityForm() {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log(data); // Log weather data to verify
                 setWeatherData(data);
             } else {
                 setWeatherData(null);
@@ -168,7 +176,7 @@ function CityForm() {
             <div className="weather-details container">
                 <p className="weather-date">{month} {dayDate}</p>
                 <p className="weather-location">
-                    <FontAwesomeIcon icon={faLocationPin} style={{ color: '#eb6e4b', fontSize: '24px' }} data-tooltip={`Latitude: ${cityData.geometry.location.lat}, Longitude: ${cityData.geometry.location.lng}`} />
+                    <FontAwesomeIcon icon={faLocationPin} bounce style={{ color: '#eb6e4b', fontSize: '24px'}} data-tooltip={`Latitude: ${cityData.geometry.location.lat}, Longitude: ${cityData.geometry.location.lng}`}/>
                     &nbsp;{weatherData.name}, {weatherData.sys.country}
                 </p>
                 <div className="icon-temp-container">
