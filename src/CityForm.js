@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faLocationPin } from '@fortawesome/free-solid-svg-icons';
 
-
 function CityForm() {
     const [cityData, setCityData] = useState(null);
     const [weatherData, setWeatherData] = useState(null);
@@ -18,32 +17,30 @@ function CityForm() {
     const inputRef = useRef(null);
 
     useEffect(() => {
-        loadGoogleMapsScript(() => {
-            initAutocomplete();
-        });
-    }, []);
+        const loadGoogleMapsScript = () => {
+            const existingScript = document.getElementById('googleMaps');
 
-    const loadGoogleMapsScript = (callback) => {
-        const existingScript = document.getElementById('googleMaps');
-
-        if (existingScript) {
-            // If the script is already loaded, just execute the callback
-            if (callback && (!existingScript.onload || existingScript.readyState === 'loaded' || existingScript.readyState === 'complete')) {
-                callback();
+            if (existingScript) {
+                // If the script is already loaded, just execute the callback
+                if (!existingScript.onload || existingScript.readyState === 'loaded' || existingScript.readyState === 'complete') {
+                    initAutocomplete();
+                }
+                return;
             }
-            return;
-        }
 
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleApiKey}&libraries=places`;
-        script.id = 'googleMaps';
-        document.body.appendChild(script);
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleApiKey}&libraries=places`;
+            script.id = 'googleMaps';
+            document.body.appendChild(script);
 
-        script.onload = () => {
-            if (callback) callback();
+            script.onload = () => {
+                initAutocomplete();
+            };
         };
-    };
 
+        loadGoogleMapsScript();
+        // eslint-disable-next-line
+    }, []);
 
     const onPlaceInputChange = async () => {
         const place = inputRef.current.value;
@@ -78,7 +75,7 @@ function CityForm() {
 
             try {
                 const response = await fetch(
-                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=AIzaSyAy2_thrv8sXvVOpLFKDNr7fFVawlIpeFs`
+                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=${config.googleApiKey}`
                 );
 
                 if (response.ok) {
@@ -130,7 +127,6 @@ function CityForm() {
 
         autocomplete.addListener('place_changed', onPlaceInputChange);
     };
-
 
     const fetchWeatherData = async (cityName) => {
         try {
