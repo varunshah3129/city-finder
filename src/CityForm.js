@@ -21,7 +21,6 @@ function CityForm() {
         loadGoogleMapsScript(() => {
             initAutocomplete();
         });
-        // eslint-disable-next-line
     }, []);
 
     const loadGoogleMapsScript = (callback) => {
@@ -51,10 +50,10 @@ function CityForm() {
 
         if (place) {
             try {
-                //const proxyurl = "https://cors-anywhere.herokuapp.com/";
+                const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
                 const response = await fetch(
-                    `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${config.googleApiKey}`
+                    `${proxyurl}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${place}&key=${config.googleApiKey}`
                 );
 
                 if (response.ok) {
@@ -75,11 +74,11 @@ function CityForm() {
         const place = event.target.place.value;
 
         if (place) {
-            //const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
             try {
                 const response = await fetch(
-                    `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=AIzaSyAy2_thrv8sXvVOpLFKDNr7fFVawlIpeFs`
+                    `${proxyurl}https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=name,formatted_address,geometry&key=AIzaSyAy2_thrv8sXvVOpLFKDNr7fFVawlIpeFs`
                 );
 
                 if (response.ok) {
@@ -135,9 +134,9 @@ function CityForm() {
 
     const fetchWeatherData = async (cityName) => {
         try {
-            //const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            const proxyurl = "https://cors-anywhere.herokuapp.com/";
             const response = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${config.openWeatherApiKey}&units=metric`
+                `${proxyurl}https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${config.openWeatherApiKey}&units=metric`
             );
 
             if (response.ok) {
@@ -205,18 +204,18 @@ function CityForm() {
     const fetchPlacesData = async (cityName) => {
         try {
             const apiKey = `${config.googleApiKey}`;
-            //const proxyurl = "https://cors-anywhere.herokuapp.com/";
+            const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
             const restaurantsResponse = await fetch(
-                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${cityName}&key=${apiKey}`
+                `${proxyurl}https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${cityName}&key=${apiKey}`
             );
 
             const historicalSitesResponse = await fetch(
-                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=historical+sites+in+${cityName}&key=${apiKey}`
+                `${proxyurl}https://maps.googleapis.com/maps/api/place/textsearch/json?query=historical+sites+in+${cityName}&key=${apiKey}`
             );
 
             const placesOfInterestResponse = await fetch(
-                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=places+of+interest+in+${cityName}&key=${apiKey}`
+                `${proxyurl}https://maps.googleapis.com/maps/api/place/textsearch/json?query=places+of+interest+in+${cityName}&key=${apiKey}`
             );
 
             const restaurantsData = await restaurantsResponse.json();
